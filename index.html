@@ -64,11 +64,12 @@
     <section class="panel">
       <h2>資産推移</h2>
       <div class="legend" id="legend"></div>
+      <p class="hint">実線＝途中入金あり、破線＝途中入金なし</p>
       <canvas id="chart" aria-label="利回り別の運用残高推移"></canvas>
     </section>
 
     <section class="panel">
-      <h2>各年末の評価額</h2>
+      <h2>各年末の評価額（途中入金あり／なし）</h2>
       <div class="table-wrap"><table id="resultTable"></table></div>
       <p class="note">表示額は税金・手数料・奨学金の毎月返済を運用口座から差し引いていません。「実質資産」は最終評価額から借入元金と概算利息を一括控除した参考値です。</p>
     </section>
@@ -108,20 +109,21 @@ function loanCost(principal,rate,years=15){if(!principal)return 0;if(!rate)retur
 function calculate(){
   const current=+document.getElementById('balance').value||0,pre=(+document.getElementById('preRate').value||0)/100,start=+document.getElementById('startYear').value||2027,years=Math.max(1,+document.getElementById('years').value||20);
   const rates=document.getElementById('rates').value.split(/[,、\s]+/).map(Number).filter(x=>Number.isFinite(x)&&x>-100).slice(0,6);
-  const events=readEvents(),initial=current*(1+pre),data={};
-  rates.forEach(rate=>{let bal=initial;data[rate]=[];for(let y=start;y<start+years;y++){bal*=1+rate/100;events.filter(e=>e.year===y).forEach(e=>bal+=e.amount*Math.pow(1+rate/100,Math.max(0,Math.min(12,e.months))/12));data[rate].push(bal)}});
+  const events=readEvents(),initial=current*(1+pre),data={},baseline={};
+  rates.forEach(rate=>{let bal=initial,base=initial;data[rate]=[];baseline[rate]=[];for(let y=start;y<start+years;y++){bal*=1+rate/100;base*=1+rate/100;events.filter(e=>e.year===y).forEach(e=>bal+=e.amount*Math.pow(1+rate/100,Math.max(0,Math.min(12,e.months))/12));data[rate].push(bal);baseline[rate].push(base)}});
   const totalAdd=events.reduce((s,e)=>s+e.amount,0),loan=+document.getElementById('loanPrincipal').value||0,loanRate=+document.getElementById('loanRate').value||0,loanTotal=loanCost(loan,loanRate);
   const finalRates=rates.map(r=>({r,val:data[r][years-1]}));
   const center=finalRates[Math.floor(finalRates.length/2)]||{r:0,val:initial};
-  document.getElementById('summary').innerHTML=`<div class="stat"><span>運用開始時</span><strong>${manyen(initial)}</strong></div><div class="stat"><span>途中入金合計</span><strong>${manyen(totalAdd)}</strong></div><div class="stat primary"><span>${center.r}%・${years}年後</span><strong>${manyen(center.val)}</strong><small>借入総返済概算控除後 ${manyen(center.val-loanTotal)}</small></div>`;
-  renderTable(start,years,rates,data);renderChart(start,years,rates,data);
+  const centerBase=(baseline[center.r]||[])[years-1]||initial;
+  document.getElementById('summary').innerHTML=`<div class="stat"><span>運用開始時</span><strong>${manyen(initial)}</strong></div><div class="stat"><span>途中入金合計</span><strong>${manyen(totalAdd)}</strong></div><div class="stat primary"><span>${center.r}%・${years}年後（入金あり）</span><strong>${manyen(center.val)}</strong><small>入金なし ${manyen(centerBase)} ／ 差額 ${manyen(center.val-centerBase)}</small><small>借入総返済概算控除後 ${manyen(center.val-loanTotal)}</small></div>`;
+  renderTable(start,years,rates,data,baseline);renderChart(start,years,rates,data,baseline);
 }
-function renderTable(start,years,rates,data){const t=document.getElementById('resultTable');t.innerHTML=`<thead><tr><th>年末</th>${rates.map(r=>`<th>${r}%</th>`).join('')}</tr></thead><tbody>${Array.from({length:years},(_,i)=>`<tr><td>${start+i}年</td>${rates.map(r=>`<td>${manyen(data[r][i])}</td>`).join('')}</tr>`).join('')}</tbody>`}
-function renderChart(start,years,rates,data){
+function renderTable(start,years,rates,data,baseline){const t=document.getElementById('resultTable');t.innerHTML=`<thead><tr><th rowspan="2">年末</th>${rates.map(r=>`<th colspan="2">${r}%</th>`).join('')}</tr><tr>${rates.map(()=>'<th>入金あり</th><th>入金なし</th>').join('')}</tr></thead><tbody>${Array.from({length:years},(_,i)=>`<tr><td>${start+i}年</td>${rates.map(r=>`<td>${manyen(data[r][i])}</td><td>${manyen(baseline[r][i])}</td>`).join('')}</tr>`).join('')}</tbody>`}
+function renderChart(start,years,rates,data,baseline){
   const canvas=document.getElementById('chart'),dpr=window.devicePixelRatio||1,w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);c.clearRect(0,0,w,h);
   const pad={l:62,r:18,t:12,b:38},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b,max=Math.max(...rates.flatMap(r=>data[r]),1);c.font='12px -apple-system,sans-serif';c.lineWidth=1;c.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--line');c.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted');
   for(let i=0;i<=4;i++){const y=pad.t+ph*i/4;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();const v=max*(1-i/4);c.textAlign='right';c.fillText(v>=1e8?(v/1e8).toFixed(1)+'億':Math.round(v/1e4)+'万',pad.l-8,y+4)}
-  const x=i=>pad.l+(years===1?pw/2:pw*i/(years-1)),y=v=>pad.t+ph*(1-v/max);rates.forEach((r,ri)=>{c.beginPath();data[r].forEach((v,i)=>i?c.lineTo(x(i),y(v)):c.moveTo(x(i),y(v)));c.strokeStyle=colors[ri%colors.length];c.lineWidth=3;c.stroke();const last=data[r][years-1];c.fillStyle=colors[ri%colors.length];c.beginPath();c.arc(x(years-1),y(last),4,0,Math.PI*2);c.fill()});
+  const x=i=>pad.l+(years===1?pw/2:pw*i/(years-1)),y=v=>pad.t+ph*(1-v/max);rates.forEach((r,ri)=>{const color=colors[ri%colors.length];c.beginPath();baseline[r].forEach((v,i)=>i?c.lineTo(x(i),y(v)):c.moveTo(x(i),y(v)));c.strokeStyle=color;c.globalAlpha=.45;c.setLineDash([7,5]);c.lineWidth=2;c.stroke();c.globalAlpha=1;c.setLineDash([]);c.beginPath();data[r].forEach((v,i)=>i?c.lineTo(x(i),y(v)):c.moveTo(x(i),y(v)));c.strokeStyle=color;c.lineWidth=3;c.stroke();const last=data[r][years-1];c.fillStyle=color;c.beginPath();c.arc(x(years-1),y(last),4,0,Math.PI*2);c.fill()});
   c.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted');c.textAlign='center';const ticks=Math.min(5,years);for(let j=0;j<ticks;j++){const i=Math.round((years-1)*j/(ticks-1||1));c.fillText(start+i,x(i),h-12)}
   document.getElementById('legend').innerHTML=rates.map((r,i)=>`<span style="--c:${colors[i%colors.length]}">年${r}%</span>`).join('');
 }
