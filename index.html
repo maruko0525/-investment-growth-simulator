@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>積立・臨時入金 運用シミュレーター</title>
+  <link rel="icon" type="image/png" href="30871DC1-C5E4-4AE1-BAFA-B6F702C40B90.png">
+  <link rel="apple-touch-icon" href="30871DC1-C5E4-4AE1-BAFA-B6F702C40B90.png">
   <style>
     :root{--bg:#f5f7fb;--panel:#fff;--text:#172033;--muted:#667085;--line:#dfe5ef;--blue:#175cd3;--blue2:#dbeafe;--green:#087443;--red:#b42318;--shadow:0 8px 28px rgba(20,35,70,.08)}
     *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;line-height:1.5}
@@ -25,93 +27,31 @@
 <body>
 <main class="app">
   <header class="hero"><h1>積立・臨時入金 運用シミュレーター</h1><p>途中入金と複数利回りを、年末残高で比較</p></header>
-
   <div class="grid">
-    <section class="panel">
-      <h2>基本条件</h2>
-      <div class="inputs">
-        <div class="field"><label for="balance">現在の評価額（円）</label><input id="balance" type="number" min="0" step="1" value="3705551"></div>
-        <div class="field"><label for="preRate">開始前の増減率（％）</label><input id="preRate" type="number" step="0.1" value="5"></div>
-        <div class="field"><label for="startYear">運用開始年</label><input id="startYear" type="number" min="2000" max="2200" value="2027"></div>
-        <div class="field"><label for="startAge">運用開始年末の年齢</label><input id="startAge" type="number" min="0" max="120" value="21"></div>
-        <div class="field"><label for="years">運用年数</label><input id="years" type="number" min="1" max="60" value="20"></div>
-        <div class="field" style="grid-column:span 2"><label for="rates">比較する年利（％・カンマ区切り）</label><input id="rates" value="7, 10, 12, 15"></div>
-        <div class="field"><label for="loanPrincipal">借入元金（円）</label><input id="loanPrincipal" type="number" min="0" value="2400000"></div>
-        <div class="field"><label for="loanRate">借入金利（年％）</label><input id="loanRate" type="number" min="0" step="0.1" value="3"></div>
-      </div>
-      <p class="hint">開始前の増減率は現在残高に1回だけ反映します。借入は実質資産の参考表示に使います。</p>
-    </section>
-
-    <section class="panel">
-      <h2>毎月積立</h2>
-      <div class="events-wrap">
-        <table class="events monthly">
-          <thead><tr><th>開始年</th><th>開始月</th><th>終了年</th><th>終了月</th><th>毎月の金額（円）</th><th></th></tr></thead>
-          <tbody id="monthlyRows"></tbody>
-        </table>
-      </div>
-      <button class="add" id="addMonthly" type="button">＋ 積立期間を追加</button>
-      <p class="hint">開始月から終了月まで、毎月末に積み立てる前提です。期間は複数指定できます。</p>
-    </section>
-
-    <section class="panel">
-      <h2>途中入金</h2>
-      <div class="events-wrap">
-        <table class="events">
-          <thead><tr><th>入金年</th><th>月</th><th>金額（円）</th><th>年内の運用月数</th><th>区分</th><th></th></tr></thead>
-          <tbody id="eventRows"></tbody>
-        </table>
-      </div>
-      <button class="add" id="addEvent" type="button">＋ 入金を追加</button>
-    </section>
-
-    <section class="panel">
-      <div class="actions"><button class="recalc" id="calculate" type="button">再計算</button><button class="save" id="saveConditions" type="button">条件を保存</button><button class="tool" id="loadConditions" type="button">保存条件を読込</button><button class="tool" id="printPdf" type="button">PDF保存／印刷</button><button class="tool" id="exportCsv" type="button">CSV出力</button><button class="reset" id="reset" type="button">今回の条件に戻す</button></div>
-      <div class="saved-manager" id="savedManager"><select id="savedList" aria-label="保存条件を選択"></select><button class="recalc" id="applySaved" type="button">読込</button><button class="delete-saved" id="deleteSaved" type="button">削除</button></div>
-      <p class="status" id="actionStatus" aria-live="polite"></p>
-    </section>
-
-    <section class="panel">
-      <h2>結果概要</h2>
-      <div class="summary" id="summary" aria-live="polite"></div>
-    </section>
-
-    <section class="panel">
-      <h2>資産推移</h2>
-      <div class="legend" id="legend"></div>
-      <p class="hint">実線＝途中入金あり、破線＝途中入金なし</p>
-      <canvas id="chart" aria-label="利回り別の運用残高推移"></canvas>
-    </section>
-
-    <section class="panel">
-      <h2>各年末の評価額（途中入金あり／なし）</h2>
-      <div class="table-wrap"><table id="resultTable"></table></div>
-      <p class="note">表示額は税金・手数料・奨学金の毎月返済を運用口座から差し引いていません。「実質資産」は最終評価額から借入元金と概算利息を一括控除した参考値です。</p>
-    </section>
+    <section class="panel"><h2>基本条件</h2><div class="inputs">
+      <div class="field"><label for="balance">現在の評価額（円）</label><input id="balance" type="number" min="0" step="1" value="3705551"></div>
+      <div class="field"><label for="preRate">開始前の増減率（％）</label><input id="preRate" type="number" step="0.1" value="5"></div>
+      <div class="field"><label for="startYear">運用開始年</label><input id="startYear" type="number" min="2000" max="2200" value="2027"></div>
+      <div class="field"><label for="startAge">運用開始年末の年齢</label><input id="startAge" type="number" min="0" max="120" value="21"></div>
+      <div class="field"><label for="years">運用年数</label><input id="years" type="number" min="1" max="60" value="20"></div>
+      <div class="field" style="grid-column:span 2"><label for="rates">比較する年利（％・カンマ区切り）</label><input id="rates" value="7, 10, 12, 15"></div>
+      <div class="field"><label for="loanPrincipal">借入元金（円）</label><input id="loanPrincipal" type="number" min="0" value="2400000"></div>
+      <div class="field"><label for="loanRate">借入金利（年％）</label><input id="loanRate" type="number" min="0" step="0.1" value="3"></div>
+    </div><p class="hint">開始前の増減率は現在残高に1回だけ反映します。借入は実質資産の参考表示に使います。</p></section>
+    <section class="panel"><h2>毎月積立</h2><div class="events-wrap"><table class="events monthly"><thead><tr><th>開始年</th><th>開始月</th><th>終了年</th><th>終了月</th><th>毎月の金額（円）</th><th></th></tr></thead><tbody id="monthlyRows"></tbody></table></div><button class="add" id="addMonthly" type="button">＋ 積立期間を追加</button><p class="hint">開始月から終了月まで、毎月末に積み立てる前提です。期間は複数指定できます。</p></section>
+    <section class="panel"><h2>途中入金</h2><div class="events-wrap"><table class="events"><thead><tr><th>入金年</th><th>月</th><th>金額（円）</th><th>年内の運用月数</th><th>区分</th><th></th></tr></thead><tbody id="eventRows"></tbody></table></div><button class="add" id="addEvent" type="button">＋ 入金を追加</button></section>
+    <section class="panel"><div class="actions"><button class="recalc" id="calculate" type="button">再計算</button><button class="save" id="saveConditions" type="button">条件を保存</button><button class="tool" id="loadConditions" type="button">保存条件を読込</button><button class="tool" id="printPdf" type="button">PDF保存／印刷</button><button class="tool" id="exportCsv" type="button">CSV出力</button><button class="reset" id="reset" type="button">今回の条件に戻す</button></div><div class="saved-manager" id="savedManager"><select id="savedList" aria-label="保存条件を選択"></select><button class="recalc" id="applySaved" type="button">読込</button><button class="delete-saved" id="deleteSaved" type="button">削除</button></div><p class="status" id="actionStatus" aria-live="polite"></p></section>
+    <section class="panel"><h2>結果概要</h2><div class="summary" id="summary" aria-live="polite"></div></section>
+    <section class="panel"><h2>資産推移</h2><div class="legend" id="legend"></div><p class="hint">実線＝途中入金あり、破線＝途中入金なし</p><canvas id="chart" aria-label="利回り別の運用残高推移"></canvas></section>
+    <section class="panel"><h2>各年末の評価額（途中入金あり／なし）</h2><div class="table-wrap"><table id="resultTable"></table></div><p class="note">表示額は税金・手数料・奨学金の毎月返済を運用口座から差し引いていません。「実質資産」は最終評価額から借入元金と概算利息を一括控除した参考値です。</p></section>
   </div>
 </main>
-
 <script>
-const defaults=[
-  {year:2027,month:7,amount:350000,months:6,type:'多子世帯'},
-  {year:2027,month:12,amount:350000,months:0,type:'多子世帯'},
-  {year:2027,month:12,amount:1200000,months:0,type:'第二種奨学金'},
-  {year:2028,month:7,amount:350000,months:6,type:'多子世帯'},
-  {year:2028,month:12,amount:350000,months:0,type:'多子世帯'},
-  {year:2028,month:12,amount:1200000,months:0,type:'第二種奨学金'}
-];
+const defaults=[{year:2027,month:7,amount:350000,months:6,type:'多子世帯'},{year:2027,month:12,amount:350000,months:0,type:'多子世帯'},{year:2027,month:12,amount:1200000,months:0,type:'第二種奨学金'},{year:2028,month:7,amount:350000,months:6,type:'多子世帯'},{year:2028,month:12,amount:350000,months:0,type:'多子世帯'},{year:2028,month:12,amount:1200000,months:0,type:'第二種奨学金'}];
 const colors=['#175cd3','#087443','#9333ea','#e04f16','#c11574','#0e7490'];
 const yen=n=>Math.round(n).toLocaleString('ja-JP')+'円';
 const manyen=n=>(n>=100000000?(n/100000000).toFixed(2)+'億円':Math.round(n/10000).toLocaleString('ja-JP')+'万円');
-
-function addRow(e={year:+document.getElementById('startYear').value,month:12,amount:0,months:0,type:'その他'}){
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td><input class="year" type="number" value="${e.year}"></td><td><input class="month" type="number" min="1" max="12" value="${e.month}"></td><td><input class="amount" type="number" min="0" step="10000" value="${e.amount}"></td><td><input class="months" type="number" min="0" max="12" step="0.5" value="${e.months}"></td><td><select class="type"><option>多子世帯</option><option>第二種奨学金</option><option>自己資金</option><option>その他</option></select></td><td><button class="delete" type="button">削除</button></td>`;
-  tr.querySelector('.type').value=e.type;
-  tr.querySelector('.delete').onclick=()=>{tr.remove();calculate()};
-  tr.querySelectorAll('input,select').forEach(x=>x.addEventListener('change',calculate));
-  document.getElementById('eventRows').appendChild(tr);
-}
+function addRow(e={year:+document.getElementById('startYear').value,month:12,amount:0,months:0,type:'その他'}){const tr=document.createElement('tr');tr.innerHTML=`<td><input class="year" type="number" value="${e.year}"></td><td><input class="month" type="number" min="1" max="12" value="${e.month}"></td><td><input class="amount" type="number" min="0" step="10000" value="${e.amount}"></td><td><input class="months" type="number" min="0" max="12" step="0.5" value="${e.months}"></td><td><select class="type"><option>多子世帯</option><option>第二種奨学金</option><option>自己資金</option><option>その他</option></select></td><td><button class="delete" type="button">削除</button></td>`;tr.querySelector('.type').value=e.type;tr.querySelector('.delete').onclick=()=>{tr.remove();calculate()};tr.querySelectorAll('input,select').forEach(x=>x.addEventListener('change',calculate));document.getElementById('eventRows').appendChild(tr)}
 function readEvents(){return [...document.querySelectorAll('#eventRows tr')].map(tr=>({year:+tr.querySelector('.year').value,month:+tr.querySelector('.month').value,amount:+tr.querySelector('.amount').value,months:+tr.querySelector('.months').value,type:tr.querySelector('.type').value})).filter(e=>Number.isFinite(e.year)&&Number.isFinite(e.amount)&&e.amount>=0)}
 function addMonthlyRow(p={startYear:+document.getElementById('startYear').value,startMonth:1,endYear:+document.getElementById('startYear').value,endMonth:12,amount:0}){const tr=document.createElement('tr');tr.innerHTML=`<td><input class="mStartYear" type="number" min="2000" max="2200" value="${p.startYear}"></td><td><input class="mStartMonth" type="number" min="1" max="12" value="${p.startMonth}"></td><td><input class="mEndYear" type="number" min="2000" max="2200" value="${p.endYear}"></td><td><input class="mEndMonth" type="number" min="1" max="12" value="${p.endMonth}"></td><td><input class="amount" type="number" min="0" step="1000" value="${p.amount}"></td><td><button class="delete" type="button">削除</button></td>`;tr.querySelector('.delete').onclick=()=>{tr.remove();calculate()};tr.querySelectorAll('input').forEach(x=>x.addEventListener('change',calculate));document.getElementById('monthlyRows').appendChild(tr)}
 function readMonthlyPlans(){return [...document.querySelectorAll('#monthlyRows tr')].map(tr=>({startYear:+tr.querySelector('.mStartYear').value,startMonth:+tr.querySelector('.mStartMonth').value,endYear:+tr.querySelector('.mEndYear').value,endMonth:+tr.querySelector('.mEndMonth').value,amount:+tr.querySelector('.amount').value})).filter(p=>Number.isFinite(p.startYear)&&Number.isFinite(p.endYear)&&p.startMonth>=1&&p.startMonth<=12&&p.endMonth>=1&&p.endMonth<=12&&p.amount>=0)}
@@ -127,29 +67,9 @@ function deleteSavedConditions(){const name=document.getElementById('savedList')
 function csvCell(value){const s=String(value??'');return /[",\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s}
 function exportCsv(){calculate();const rows=[['積立・臨時入金 運用シミュレーター'],[],['基本条件','値'],['現在の評価額（円）',document.getElementById('balance').value],['開始前の増減率（％）',document.getElementById('preRate').value],['運用開始年',document.getElementById('startYear').value],['運用開始年末の年齢',document.getElementById('startAge').value],['運用年数',document.getElementById('years').value],['比較する年利（％）',document.getElementById('rates').value],['借入元金（円）',document.getElementById('loanPrincipal').value],['借入金利（年％）',document.getElementById('loanRate').value],[],['毎月積立'],['開始年','開始月','終了年','終了月','毎月の金額（円）'],...readMonthlyPlans().map(p=>[p.startYear,p.startMonth,p.endYear,p.endMonth,p.amount]),[],['途中入金'],['入金年','月','金額（円）','年内の運用月数','区分'],...readEvents().map(e=>[e.year,e.month,e.amount,e.months,e.type]),[],['各年末の評価額']];const table=document.getElementById('resultTable'),rates=document.getElementById('rates').value.split(/[,、\s]+/).map(Number).filter(x=>Number.isFinite(x)&&x>-100).slice(0,6);rows.push(['年末','年齢',...rates.flatMap(r=>[`${r}%`,''])],['','',...rates.flatMap(()=>['入金あり','入金なし'])],...[...table.tBodies[0].rows].map(row=>[...row.cells].map(cell=>cell.textContent.trim())));const csv='\uFEFF'+rows.map(row=>row.map(csvCell).join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`運用シミュレーション_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);showStatus('CSVを出力しました。')}
 function loanCost(principal,rate,years=15){if(!principal)return 0;if(!rate)return principal;const m=rate/100/12,n=years*12,pmt=principal*m/(1-Math.pow(1+m,-n));return pmt*n}
-
-function calculate(){
-  const current=+document.getElementById('balance').value||0,pre=(+document.getElementById('preRate').value||0)/100,start=+document.getElementById('startYear').value||2027,years=Math.max(1,+document.getElementById('years').value||20);
-  const rates=document.getElementById('rates').value.split(/[,、\s]+/).map(Number).filter(x=>Number.isFinite(x)&&x>-100).slice(0,6);
-  const events=readEvents(),monthlyEvents=[];readMonthlyPlans().forEach(p=>{const first=p.startYear*12+p.startMonth-1,last=p.endYear*12+p.endMonth-1;if(last<first)return;for(let index=first;index<=last;index++){const year=Math.floor(index/12),month=index%12+1;if(year>=start&&year<start+years)monthlyEvents.push({year,month,amount:p.amount,months:12-month})}});
-  const initial=current*(1+pre),data={},baseline={};
-  rates.forEach(rate=>{let bal=initial,base=initial;data[rate]=[];baseline[rate]=[];for(let y=start;y<start+years;y++){bal*=1+rate/100;base*=1+rate/100;events.filter(e=>e.year===y).forEach(e=>bal+=e.amount*Math.pow(1+rate/100,Math.max(0,Math.min(12,e.months))/12));monthlyEvents.filter(e=>e.year===y).forEach(e=>bal+=e.amount*Math.pow(1+rate/100,e.months/12));data[rate].push(bal);baseline[rate].push(base)}});
-  const totalAdd=events.reduce((s,e)=>s+e.amount,0)+monthlyEvents.reduce((s,e)=>s+e.amount,0),loan=+document.getElementById('loanPrincipal').value||0,loanRate=+document.getElementById('loanRate').value||0,loanTotal=loanCost(loan,loanRate);
-  const finalRates=rates.map(r=>({r,val:data[r][years-1]}));
-  const center=finalRates[Math.floor(finalRates.length/2)]||{r:0,val:initial};
-  const centerBase=(baseline[center.r]||[])[years-1]||initial;
-  document.getElementById('summary').innerHTML=`<div class="stat"><span>運用開始時</span><strong>${manyen(initial)}</strong></div><div class="stat"><span>追加投資合計</span><strong>${manyen(totalAdd)}</strong><small>途中入金＋毎月積立</small></div><div class="stat primary"><span>${center.r}%・${years}年後（入金あり）</span><strong>${manyen(center.val)}</strong><small>入金なし ${manyen(centerBase)} ／ 差額 ${manyen(center.val-centerBase)}</small><small>借入総返済概算控除後 ${manyen(center.val-loanTotal)}</small></div>`;
-  const startAge=Math.max(0,+document.getElementById('startAge').value||0);renderTable(start,startAge,years,rates,data,baseline);renderChart(start,years,rates,data,baseline);
-}
+function calculate(){const current=+document.getElementById('balance').value||0,pre=(+document.getElementById('preRate').value||0)/100,start=+document.getElementById('startYear').value||2027,years=Math.max(1,+document.getElementById('years').value||20);const rates=document.getElementById('rates').value.split(/[,、\s]+/).map(Number).filter(x=>Number.isFinite(x)&&x>-100).slice(0,6);const events=readEvents(),monthlyEvents=[];readMonthlyPlans().forEach(p=>{const first=p.startYear*12+p.startMonth-1,last=p.endYear*12+p.endMonth-1;if(last<first)return;for(let index=first;index<=last;index++){const year=Math.floor(index/12),month=index%12+1;if(year>=start&&year<start+years)monthlyEvents.push({year,month,amount:p.amount,months:12-month})}});const initial=current*(1+pre),data={},baseline={};rates.forEach(rate=>{let bal=initial,base=initial;data[rate]=[];baseline[rate]=[];for(let y=start;y<start+years;y++){bal*=1+rate/100;base*=1+rate/100;events.filter(e=>e.year===y).forEach(e=>bal+=e.amount*Math.pow(1+rate/100,Math.max(0,Math.min(12,e.months))/12));monthlyEvents.filter(e=>e.year===y).forEach(e=>bal+=e.amount*Math.pow(1+rate/100,e.months/12));data[rate].push(bal);baseline[rate].push(base)}});const totalAdd=events.reduce((s,e)=>s+e.amount,0)+monthlyEvents.reduce((s,e)=>s+e.amount,0),loan=+document.getElementById('loanPrincipal').value||0,loanRate=+document.getElementById('loanRate').value||0,loanTotal=loanCost(loan,loanRate);const finalRates=rates.map(r=>({r,val:data[r][years-1]}));const center=finalRates[Math.floor(finalRates.length/2)]||{r:0,val:initial};const centerBase=(baseline[center.r]||[])[years-1]||initial;document.getElementById('summary').innerHTML=`<div class="stat"><span>運用開始時</span><strong>${manyen(initial)}</strong></div><div class="stat"><span>追加投資合計</span><strong>${manyen(totalAdd)}</strong><small>途中入金＋毎月積立</small></div><div class="stat primary"><span>${center.r}%・${years}年後（入金あり）</span><strong>${manyen(center.val)}</strong><small>入金なし ${manyen(centerBase)} ／ 差額 ${manyen(center.val-centerBase)}</small><small>借入総返済概算控除後 ${manyen(center.val-loanTotal)}</small></div>`;const startAge=Math.max(0,+document.getElementById('startAge').value||0);renderTable(start,startAge,years,rates,data,baseline);renderChart(start,years,rates,data,baseline)}
 function renderTable(start,startAge,years,rates,data,baseline){const t=document.getElementById('resultTable');t.innerHTML=`<thead><tr><th class="pin-year" rowspan="2">年末</th><th class="pin-age" rowspan="2">年齢</th>${rates.map(r=>`<th colspan="2">${r}%</th>`).join('')}</tr><tr>${rates.map(()=>'<th>入金あり</th><th>入金なし</th>').join('')}</tr></thead><tbody>${Array.from({length:years},(_,i)=>`<tr><td class="pin-year">${start+i}年</td><td class="pin-age">${startAge+i}歳</td>${rates.map(r=>`<td>${manyen(data[r][i])}</td><td>${manyen(baseline[r][i])}</td>`).join('')}</tr>`).join('')}</tbody>`}
-function renderChart(start,years,rates,data,baseline){
-  const canvas=document.getElementById('chart'),dpr=window.devicePixelRatio||1,w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);c.clearRect(0,0,w,h);
-  const pad={l:62,r:18,t:12,b:38},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b,max=Math.max(...rates.flatMap(r=>data[r]),1);c.font='12px -apple-system,sans-serif';c.lineWidth=1;c.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--line');c.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted');
-  for(let i=0;i<=4;i++){const y=pad.t+ph*i/4;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();const v=max*(1-i/4);c.textAlign='right';c.fillText(v>=1e8?(v/1e8).toFixed(1)+'億':Math.round(v/1e4)+'万',pad.l-8,y+4)}
-  const x=i=>pad.l+(years===1?pw/2:pw*i/(years-1)),y=v=>pad.t+ph*(1-v/max);rates.forEach((r,ri)=>{const color=colors[ri%colors.length];c.beginPath();baseline[r].forEach((v,i)=>i?c.lineTo(x(i),y(v)):c.moveTo(x(i),y(v)));c.strokeStyle=color;c.globalAlpha=.45;c.setLineDash([7,5]);c.lineWidth=2;c.stroke();c.globalAlpha=1;c.setLineDash([]);c.beginPath();data[r].forEach((v,i)=>i?c.lineTo(x(i),y(v)):c.moveTo(x(i),y(v)));c.strokeStyle=color;c.lineWidth=3;c.stroke();const last=data[r][years-1];c.fillStyle=color;c.beginPath();c.arc(x(years-1),y(last),4,0,Math.PI*2);c.fill()});
-  c.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted');c.textAlign='center';const ticks=Math.min(5,years);for(let j=0;j<ticks;j++){const i=Math.round((years-1)*j/(ticks-1||1));c.fillText(start+i,x(i),h-12)}
-  document.getElementById('legend').innerHTML=rates.map((r,i)=>`<span style="--c:${colors[i%colors.length]}">年${r}%</span>`).join('');
-}
+function renderChart(start,years,rates,data,baseline){const canvas=document.getElementById('chart'),dpr=window.devicePixelRatio||1,w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);c.clearRect(0,0,w,h);const pad={l:62,r:18,t:12,b:38},pw=w-pad.l-pad.r,ph=h-pad.t-pad.b,max=Math.max(...rates.flatMap(r=>data[r]),1);c.font='12px -apple-system,sans-serif';c.lineWidth=1;c.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--line');c.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted');for(let i=0;i<=4;i++){const y=pad.t+ph*i/4;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();const v=max*(1-i/4);c.textAlign='right';c.fillText(v>=1e8?(v/1e8).toFixed(1)+'億':Math.round(v/1e4)+'万',pad.l-8,y+4)}const x=i=>pad.l+(years===1?pw/2:pw*i/(years-1)),y=v=>pad.t+ph*(1-v/max);rates.forEach((r,ri)=>{const color=colors[ri%colors.length];c.beginPath();baseline[r].forEach((v,i)=>i?c.lineTo(x(i),y(v)):c.moveTo(x(i),y(v)));c.strokeStyle=color;c.globalAlpha=.45;c.setLineDash([7,5]);c.lineWidth=2;c.stroke();c.globalAlpha=1;c.setLineDash([]);c.beginPath();data[r].forEach((v,i)=>i?c.lineTo(x(i),y(v)):c.moveTo(x(i),y(v)));c.strokeStyle=color;c.lineWidth=3;c.stroke();const last=data[r][years-1];c.fillStyle=color;c.beginPath();c.arc(x(years-1),y(last),4,0,Math.PI*2);c.fill()});c.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--muted');c.textAlign='center';const ticks=Math.min(5,years);for(let j=0;j<ticks;j++){const i=Math.round((years-1)*j/(ticks-1||1));c.fillText(start+i,x(i),h-12)}document.getElementById('legend').innerHTML=rates.map((r,i)=>`<span style="--c:${colors[i%colors.length]}">年${r}%</span>`).join('')}
 function reset(){document.getElementById('balance').value=3705551;document.getElementById('preRate').value=5;document.getElementById('startYear').value=2027;document.getElementById('startAge').value=21;document.getElementById('years').value=20;document.getElementById('rates').value='7, 10, 12, 15';document.getElementById('loanPrincipal').value=2400000;document.getElementById('loanRate').value=3;document.getElementById('monthlyRows').innerHTML='';document.getElementById('eventRows').innerHTML='';defaults.forEach(addRow);calculate()}
 document.getElementById('addMonthly').onclick=()=>{addMonthlyRow();calculate()};document.getElementById('addEvent').onclick=()=>{addRow();calculate()};document.getElementById('calculate').onclick=calculate;document.getElementById('saveConditions').onclick=saveConditions;document.getElementById('loadConditions').onclick=toggleSavedManager;document.getElementById('applySaved').onclick=applySavedConditions;document.getElementById('deleteSaved').onclick=deleteSavedConditions;document.getElementById('printPdf').onclick=()=>{calculate();window.print()};document.getElementById('exportCsv').onclick=exportCsv;document.getElementById('reset').onclick=reset;document.querySelectorAll('.field input').forEach(x=>x.addEventListener('change',calculate));window.addEventListener('resize',calculate);reset();
 </script>
